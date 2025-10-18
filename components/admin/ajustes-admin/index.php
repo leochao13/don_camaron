@@ -1,7 +1,3 @@
-<!-- validacion de usuario -->
-  <?php
-      		include("/xampp/htdocs/php/polices.php");
-      ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
