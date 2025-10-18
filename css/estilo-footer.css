@@ -1,0 +1,186 @@
+/* ===== Reset y Layout general ===== */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* hace que empuje el footer hacia abajo */
+}
+
+/* Footer siempre al fondo */
+footer {
+  margin-top: auto;
+  width: 100%;
+  background: #004E7C; /* si no usas .site-footer */
+}
+
+/* ===== Footer ===== */
+.site-footer {
+  background: #111827;
+  color: #f3f4f6;
+  padding: 50px 20px 20px 20px;
+  font-size: 0.95rem;
+}
+
+.site-footer .footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+/* Logo y slogan */
+.footer-logo-box {
+  width: 140px;
+  margin-bottom: 15px;
+}
+.footer-logo-box img {
+  max-width: 100%;
+  height: auto; 
+  border-radius: 20px;
+}
+.slogan {
+  font-family: "Georgia", serif;
+  font-style: italic;
+  color: #9ca3af;
+  font-size: 1.05rem;
+  margin-top: 8px;
+}
+
+/* Pagos */
+.payments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 28px;
+  color: #f3f4f6;
+}
+.payments span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255,255,255,.25);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Redes sociales */
+.social {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.social a {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+  transition: background 0.3s ease;
+}
+.social a:hover {
+  background: rgba(255,255,255,.25);
+}
+
+/* Contacto */
+.contact {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.contact div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.contact i {
+  font-size: 1.15rem;
+  color: #3b82f6;
+}
+.contact a {
+  color: #f3f4f6;
+  text-decoration: none;
+}
+.contact a:hover {
+  text-decoration: underline;
+}
+
+/* Mapa */
+.map-wrapper {
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.map-iframe {
+  width: 100%;
+  height: 220px;
+  border: 0;
+}
+
+/* Legal */
+.legal {
+  border-top: 1px solid rgba(255,255,255,.25);
+  margin-top: 30px;
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+@media (min-width: 768px) {
+  .legal {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+.footer-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.footer-links a {
+  color: #f3f4f6;
+  text-decoration: none;
+}
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+/* WhatsApp flotante */
+.wa-float {
+  position: fixed;
+  right: 18px;
+  bottom: 58px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 18px rgba(37,211,102,.5);
+  z-index: 1000;
+  text-decoration: none;
+  font-size: 1.7rem;
+  transition: filter 0.3s ease;
+}
+.wa-float:hover {
+  filter: brightness(1.05);
+}

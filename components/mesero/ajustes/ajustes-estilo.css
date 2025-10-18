@@ -1,0 +1,215 @@
+/* ======================================================
+   AJUSTES DE ACCESIBILIDAD — Don Camarón (FINAL)
+   ====================================================== */
+
+/* ---------------- VARIABLES BASE ---------------- */
+:root {
+  --bg-body: rgb(245, 247, 255);
+  --text-color: rgb(42, 51, 65);
+  --primary-color: rgb(194, 33, 105);
+  --button-bg: #444;
+  --button-hover: #666;
+  --card-bg: rgba(230, 231, 247, 0.1);
+  --border-color: rgba(131, 135, 193, 0.4);
+  --font-scale: 1;
+  --font-family: "Nunito", sans-serif;
+  --navbar-height: 190px; /* altura real de tu navbar */
+}
+
+/* ---------------- MODO OSCURO ---------------- */
+body.dark-mode {
+  --bg-body: #121212;
+  --text-color: #f1f1f1;
+  --button-bg: #222;
+  --button-hover: #333;
+  --card-bg: rgba(40, 40, 40, 0.6);
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------------- BASE ---------------- */
+body {
+  background-color: var(--bg-body);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-size: calc(16px * var(--font-scale));
+  transition: background-color 0.3s, color 0.3s, font-size 0.2s ease;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------------- CONTENEDOR PRINCIPAL ---------------- */
+.ajustes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 0 10px 50px;
+  margin-top: var(--navbar-height); /* deja espacio para navbar fijo */
+  text-align: center;
+}
+
+.ajustes-container h2 {
+  font-size: 2em;
+  margin-bottom: 30px;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: 0.5px;
+}
+
+/* ---------------- GRUPO DE BOTONES ---------------- */
+.ajustes-botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 800px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 25px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s, border-color 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+.ajustes-botones button {
+  background-color: var(--button-bg);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 160px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ajustes-botones button:hover {
+  background-color: var(--button-hover);
+  transform: scale(1.05);
+}
+
+.ajustes-botones button:active {
+  transform: scale(0.97);
+}
+
+/* ---------------- BOTÓN MODO OSCURO ---------------- */
+#btn-darkmode {
+  background-color: var(--button-bg);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 500;
+  transition: background-color 0.3s;
+}
+
+#btn-darkmode:hover {
+  background-color: var(--button-hover);
+}
+
+/* ---------------- CONTROL DE CONTRASTE ---------------- */
+.contraste-control {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--button-bg);
+  color: #fff;
+  padding: 12px 15px;
+  border-radius: 10px;
+  z-index: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+}
+
+.contraste-control label {
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.contraste-control input[type="range"] {
+  width: 120px;
+  vertical-align: middle;
+  accent-color: var(--primary-color);
+}
+
+/* ---------------- ESCALA DE GRISES ---------------- */
+body.grayscale-mode {
+  filter: grayscale(1);
+  transition: filter 0.3s ease;
+}
+
+/* ---------------- GUÍA DE LECTURA ---------------- */
+#readingGuide {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: rgba(255, 255, 0, 0.15);
+  pointer-events: none;
+  z-index: 10;
+  transition: top 0.05s ease-out;
+}
+
+/* ---------------- TIPOGRAFÍAS ALTERNATIVAS ---------------- */
+.font-alt-1 {
+  --font-family: "Roboto", sans-serif;
+}
+.font-alt-2 {
+  --font-family: "Poppins", sans-serif;
+}
+.font-alt-3 {
+  --font-family: "Merriweather", serif;
+}
+
+/* ---------------- NAVBAR DINÁMICO ---------------- */
+#navbar-container,
+#navbar-container * {
+  position: relative;
+  z-index: 9999; /* siempre encima */
+  pointer-events: auto !important;
+}
+
+#navbar-container a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+body.grayscale-mode #navbar-container {
+  filter: none !important; /* evitar que gris afecte links */
+}
+
+#navbar-container a:hover {
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+@media (max-width: 600px) {
+  .ajustes-container h2 {
+    font-size: 1.6em;
+  }
+
+  .ajustes-botones {
+    gap: 12px;
+    padding: 20px 15px;
+  }
+
+  .ajustes-botones button {
+    min-width: 140px;
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .contraste-control {
+    top: auto;
+    bottom: 20px;
+    right: 20px;
+  }
+}

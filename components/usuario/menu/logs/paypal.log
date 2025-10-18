@@ -1,0 +1,8 @@
+[15-Sep-2025 18:48:12 Europe/Berlin] [captura_api] SQLSTATE[42883]: Undefined function: 7 ERROR:  el operador no existe: boolean = integer
+LINE 1: ...precio, descuento FROM producto WHERE id = $1 AND activo = 1
+                                                                    ^
+HINT:  Ningún operador coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.
+[15-Sep-2025 18:49:34 Europe/Berlin] [captura_api] SQLSTATE[42883]: Undefined function: 7 ERROR:  el operador no existe: boolean = integer
+LINE 1: ...precio, descuento FROM producto WHERE id = $1 AND activo = 1
+                                                                    ^
+HINT:  Ningún operador coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.

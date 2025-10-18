@@ -1,0 +1,151 @@
+@import url("https://fonts.googleapis.com/css?family=Raleway:400,700&display=swap");
+
+:root {
+  box-sizing: border-box;
+  --clr-head: #0c3653;
+  --clr-accent: #f98169;
+  --clr-body: #aeb2b4;
+  --fs-h2: 3rem;
+  --fs-h4: 1.8rem;
+  --ff-body: "Raleway", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+h2,
+h4 {
+  color: var(--clr-head);
+  margin-top: 100px;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+}
+
+.wrapper {
+  max-width: 1000px;
+  width: 100%;
+  margin: 3em auto;
+  padding: 0 2em;
+}
+
+.head-title {
+  text-align: center;
+}
+
+.head-text {
+  max-width: 520px;
+  margin: auto;
+  margin-top: 0.5em;
+  text-align: center;
+}
+
+.cards {
+  max-width: 100%;
+  width: 1100px;
+  margin-top: 4em;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* cards más pequeñas */
+  grid-gap: 3rem; /* menos espacio entre cards */
+}
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 300ms ease-in-out;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 5px 10px 30px 0 rgba(0, 0, 0, 0.09);
+  }
+
+  .card__image {
+    width: 100%;
+    height: 180px; /* altura más pequeña */
+    object-fit: cover;
+    object-position: center;
+  }
+
+.card__content {
+  padding: 0.3em 0.8em 1em 0.8em; /* padding superior muy pequeño */
+  margin-top: -15px; /* sube el cuadro ligeramente sobre la imagen */
+  background-color: #fff;
+  border-radius: 0 0 8px 8px;
+  position: relative;
+  z-index: 1;
+}
+
+  .card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8em;
+  }
+
+  .card__title {
+  font-size: 1.6rem;
+  color: var(--clr-head);
+  margin: 0; /* elimina margen superior/inferior */
+}
+
+.card__price {
+  font-size: 2rem;
+  color: var(--clr-accent);
+  margin: 0; /* elimina margen */
+}
+
+.card__text {
+  font-size: 1.2rem;
+  color: var(--clr-body);
+  line-height: 1.4;
+  margin-top: 0.2em; /* solo un pequeño espacio debajo del título y precio */
+}
+
+/* Responsivo */
+@media screen and (max-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 2rem;
+  }
+
+  .card__image {
+    height: 150px;
+  }
+
+  .card__price {
+    font-size: 1.8rem;
+  }
+
+  .card__text {
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .wrapper {
+    padding: 0 1em;
+  }
+
+  .card__image {
+    height: 130px;
+  }
+
+  .card__price {
+    font-size: 1.6rem;
+  }
+
+  .card__text {
+    font-size: 1rem;
+  }
+}

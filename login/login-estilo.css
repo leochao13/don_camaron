@@ -1,0 +1,195 @@
+body {
+    background: url("https://i.pinimg.com/1200x/85/67/d4/8567d4f5ffcbf1bbb958a02fbc862c95.jpg") no-repeat center center fixed;
+    background-size: cover;   
+}
+
+.wrapper {
+  --input-focus: #00A6A6;       /* Azul Turquesa */
+  --font-color: #004E7C;        /* Azul Marino */
+  --font-color-sub: #6ED3CF;    /* Verde Agua */
+  --bg-color: rgba(242, 233, 228, 0.8); /* Arena Beige transparente */
+  --bg-color-alt: rgba(110, 211, 207, 0.6); /* Verde Agua translúcido */
+  --main-color: #004E7C;        /* Azul Marino */
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;  
+}
+
+/* switch card */
+.switch {
+  transform: translateY(-200px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  width: 50px;
+  height: 20px;
+}
+
+.card-side::before {
+  position: absolute;
+  content: 'Acceso';
+  left: -70px;
+  top: 0;
+  width: 100px;
+  text-decoration: none;
+  color: #F2E9E4;
+  font-weight: 600;
+}
+
+.card-side::after {
+  position: absolute;
+  content: 'Regístrate';
+  left: 70px;
+  top: 0;
+  width: 100px;
+  text-decoration: none;
+  color: #F2E9E4;
+  font-weight: 600;
+}
+
+.toggle {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-color);
+  transition: 0.3s;
+}
+
+.slider:before {
+  box-sizing: border-box;
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  border: 2px solid var(--main-color);
+  border-radius: 5px;
+  left: -2px;
+  bottom: 2px;
+  background-color: var(--bg-color);
+  box-shadow: 0 3px 0 var(--main-color);
+  transition: 0.3s;
+}
+
+.toggle:checked + .slider {
+  background-color: var(--input-focus);
+}
+
+.toggle:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+/* card */ 
+.flip-card__inner {
+  width: 300px;
+  height: 350px;
+  position: relative;
+  background-color: transparent;
+  perspective: 1000px;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.toggle:checked ~ .flip-card__inner {
+  transform: rotateY(180deg);
+}
+
+.toggle:checked ~ .flip-card__front {
+  box-shadow: none;
+}
+
+.flip-card__front, .flip-card__back {
+  padding: 20px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: rgba(242, 233, 228, 0.85); /* Arena Beige translúcido */
+  gap: 20px;
+  border-radius: 10px;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px rgba(0, 78, 124, 0.6); /* Azul Marino suave */
+}
+
+.flip-card__back {
+  width: 100%;
+  transform: rotateY(180deg);
+}
+
+.flip-card__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.title {
+  margin: 20px 0 20px 0;
+  font-size: 25px;
+  font-weight: 900;
+  text-align: center;
+  color: var(--main-color);
+}
+
+.flip-card__input {
+  width: 250px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: rgba(242, 233, 228, 0.7); /* Input translúcido */
+  box-shadow: 2px 2px rgba(0, 78, 124, 0.4);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+  padding: 5px 10px;
+  outline: none;
+}
+
+.flip-card__input::placeholder {
+  color: var(--font-color-sub);
+  opacity: 0.8;
+}
+
+.flip-card__input:focus {
+  border: 2px solid var(--input-focus);
+}
+
+.flip-card__btn:active, .button-confirm:active {
+  box-shadow: 0px 0px var(--main-color);
+  transform: translate(3px, 3px);
+}
+
+.flip-card__btn {
+  margin: 20px 0 20px 0;
+  width: 120px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: rgba(110, 211, 207, 0.85); /* Verde Agua translúcido */
+  box-shadow: 2px 2px rgba(0, 78, 124, 0.5);
+  font-size: 17px;
+  font-weight: 600;
+  color: #004E7C; /* Azul Marino */
+  cursor: pointer;
+}
