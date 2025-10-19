@@ -14,11 +14,9 @@ require_once __DIR__ . "/../../components/usuario/menu/config/database.php";
 $db  = new Database();
 $con = $db->conectar();
 
-
 $NDIAS  = 30;
 $hoy    = new DateTime('today');
 $inicio = (clone $hoy)->modify('-' . ($NDIAS - 1) . ' days');
-
 
 $driver = $con->getAttribute(PDO::ATTR_DRIVER_NAME);
 
@@ -49,7 +47,6 @@ $stmt->bindValue(':start', $inicio->format('Y-m-d') . ' 00:00:00', PDO::PARAM_ST
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
 $map = [];
 foreach ($rows as $r) {
   $map[$r['dia']] = [
@@ -70,7 +67,6 @@ foreach ($period as $d) {
   $ventasData[]  = $map[$k]['ventas'] ?? 0.0;
 }
 
-
 $totalPedidos = array_sum($pedidosData);
 $totalVentas  = array_sum($ventasData);
 $ticketProm   = $totalPedidos > 0 ? $totalVentas / $totalPedidos : 0.0;
@@ -82,32 +78,115 @@ $ticketProm   = $totalPedidos > 0 ? $totalVentas / $totalPedidos : 0.0;
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Don Camarón | Panel Admin: Inicio</title>
 
+  <!-- Estilos globales del admin (incluye variables de accesibilidad/tema) -->
   <link rel="stylesheet" href="/components/admin/admin-estilo.css">
   <link rel="icon" href="/icon.png" type="image/x-icon">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- ✅ Boot accesibilidad/tema (aplica ANTES de pintar + TTS auto si seeded) -->
+  <script>
+  (function(){
+    var r=document.documentElement;
+    try{
+      // Tema por defecto: CLARO
+      var dark = localStorage.getItem('ac_dark');
+      if (dark === null || dark === undefined) {
+        localStorage.setItem('ac_dark','0');
+        dark = '0';
+      }
+      var isDark = dark === '1';
+      r.classList.toggle('theme-dark', isDark);
+      r.classList.toggle('theme-light', !isDark);
+      r.classList.toggle('modo-nocturno', isDark); // compatibilidad con estilos antiguos
+      r.style.setProperty('--ac-invert', isDark ? '1' : '0');
+
+      // Accesibilidad
+      var c=parseFloat(localStorage.getItem('ac_contrast_val'));
+      if(isNaN(c)) c = (localStorage.getItem('ac_contrast')==='1') ? 1.6 : 1;
+      var f=parseFloat(localStorage.getItem('ac_font_scale'));
+      if(isNaN(f)) f = (localStorage.getItem('ac_font')==='1') ? 1.35 : 1;
+      r.style.setProperty('--ac-contrast', String(Math.min(2,Math.max(0.5,c))));
+      r.style.setProperty('--ac-font-scale', String(Math.min(1.6,Math.max(0.9,f))));
+      r.style.setProperty('--ac-gray', localStorage.getItem('ac_gray')==='1' ? '1' : '0');
+      if(localStorage.getItem('ac_ruler')==='1'){ r.classList.add('guia-lectura'); }
+      if(localStorage.getItem('ac_fontface')==='1'){ r.classList.add('tipografia-alt'); }
+      if(localStorage.getItem('ac_fontface2')==='1'){ r.classList.add('tipografia-alt2'); }
+
+      // TTS auto (si ya hubo gesto en Ajustes)
+      (function(){
+        const want = localStorage.getItem('ac_tts')==='auto';
+        let seeded=false; try{ seeded=sessionStorage.getItem('ac_tts_seeded')==='1'; }catch(_){}
+        if(!want || !seeded) return;
+        function collect(){
+          const q=s=>document.querySelector(s);
+          const parts=[];
+          parts.push(q('.admin-sidebar, .main-menu, nav[role="navigation"]')?.innerText||'');
+          parts.push(q('main, .container, .content')?.innerText||'');
+          const t=parts.filter(Boolean).join('\n\n').trim();
+          return t || (document.body.innerText||'').trim();
+        }
+        function speakNow(t){
+          try{
+            if(!('speechSynthesis' in window)) return;
+            speechSynthesis.cancel();
+            const u=new SpeechSynthesisUtterance(t);
+            u.lang='es-MX';
+            speechSynthesis.speak(u);
+          }catch(_){}
+        }
+        if(document.readyState==='loading'){
+          document.addEventListener('DOMContentLoaded', ()=>speakNow(collect()), {once:true});
+        }else{
+          speakNow(collect());
+        }
+      })();
+    }catch(e){}
+  })();
+  </script>
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    body.darkmode { background:#0f1216; color:#e5e7eb; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, 'Open Sans', sans-serif; }
-    .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    /* =========================
+       Usar variables del tema
+       ========================= */
+    .container {
+      max-width: 1100px; margin: 24px auto; padding: 0 16px;
+      color: var(--fg); background: var(--bg);
+    }
     .grid { display:grid; gap:16px; }
     .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .card { background:#151a21; border:1px solid #1e2530; border-radius:16px; padding:16px; box-shadow: 0 10px 20px rgba(0,0,0,.25); }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      color: var(--fg);
+    }
     .kpi { display:flex; align-items:center; gap:12px; }
     .kpi .icon { font-size:28px; }
-    .kpi .title { font-size:12px; color:#94a3b8; text-transform:uppercase; letter-spacing:.08em; }
+    .kpi .title { font-size:12px; color: var(--muted-fg); text-transform:uppercase; letter-spacing:.08em; }
     .kpi .value { font-weight:700; font-size:22px; }
-    .muted { color:#94a3b8; font-size:12px; }
+    .muted { color: var(--muted-fg); font-size:12px; }
+
     .chart-wrap { padding:12px; }
-    .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; color: var(--fg); }
     .header h2 { margin:0; font-size:18px; }
-    .badge { background:#0b1220; border:1px solid #1e2530; border-radius:999px; padding:4px 10px; font-size:12px; color:#94a3b8; }
+    .badge {
+      background: var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:999px; padding:4px 10px; font-size:12px; color: var(--muted-fg);
+    }
   </style>
 </head>
-<body class="darkmode">
+
+<!-- ❌ sin class="darkmode" -->
+<body>
+  <!-- Navbar -->
   <div id="navbar-container"></div>
-  <script src="/js/main-navbar-admin.js"></script>
 
   <div class="container">
     <div class="header">
@@ -160,31 +239,58 @@ $ticketProm   = $totalPedidos > 0 ? $totalVentas / $totalPedidos : 0.0;
     </div>
   </div>
 
+  <!-- Inicialización de la gráfica (colores desde CSS para respetar tema) -->
   <script>
-    const labels      = <?= json_encode($labels, JSON_UNESCAPED_UNICODE) ?>;
-    const pedidosData = <?= json_encode($pedidosData, JSON_UNESCAPED_UNICODE) ?>;
-    const ventasData  = <?= json_encode($ventasData,  JSON_UNESCAPED_UNICODE) ?>;
+    (function(){
+      const labels      = <?= json_encode($labels, JSON_UNESCAPED_UNICODE) ?>;
+      const pedidosData = <?= json_encode($pedidosData, JSON_UNESCAPED_UNICODE) ?>;
+      const ventasData  = <?= json_encode($ventasData,  JSON_UNESCAPED_UNICODE) ?>;
 
-    new Chart(document.getElementById('pedidosVentasChart'), {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          { label: 'Pedidos',      data: pedidosData, tension:0.25, borderWidth:2, pointRadius:2, yAxisID:'y1' },
-          { label: 'Ventas (MXN)', data: ventasData,  tension:0.25, borderWidth:2, pointRadius:2, yAxisID:'y2' }
-        ]
-      },
-      options: {
-        responsive: true,
-        interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { labels: { color:'#e5e7eb' } } },
-        scales: {
-          x:  { ticks: { color:'#94a3b8' }, grid:{ color:'rgba(148,163,184,0.1)' } },
-          y1: { type:'linear', position:'left',  ticks:{ color:'#94a3b8' }, grid:{ color:'rgba(148,163,184,0.1)' }, title:{ display:true, text:'Pedidos', color:'#94a3b8' } },
-          y2: { type:'linear', position:'right', ticks:{ color:'#94a3b8' }, grid:{ drawOnChartArea:false }, title:{ display:true, text:'Ventas (MXN)', color:'#94a3b8' } }
-        }
+      function chartColors(){
+        const cs = getComputedStyle(document.documentElement);
+        return {
+          text: cs.getPropertyValue('--fg')?.trim() || '#111827',
+          muted: cs.getPropertyValue('--muted-fg')?.trim() || '#6b7280',
+          grid: 'rgba(148,163,184,0.12)',
+          line1: '#3b82f6', // azul
+          line2: '#ef4444', // rojo
+        };
       }
-    });
+
+      const c = chartColors();
+      new Chart(document.getElementById('pedidosVentasChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Pedidos',      data: pedidosData, tension:0.25, borderWidth:2, pointRadius:2, borderColor:c.line1, yAxisID:'y1' },
+            { label: 'Ventas (MXN)', data: ventasData,  tension:0.25, borderWidth:2, pointRadius:2, borderColor:c.line2, yAxisID:'y2' }
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { labels: { color: c.text } } },
+          scales: {
+            x:  { ticks: { color: c.muted }, grid:{ color: c.grid } },
+            y1: { type:'linear', position:'left',  ticks:{ color: c.muted }, grid:{ color: c.grid }, title:{ display:true, text:'Pedidos', color: c.muted } },
+            y2: { type:'linear', position:'right', ticks:{ color: c.muted }, grid:{ drawOnChartArea:false }, title:{ display:true, text:'Ventas (MXN)', color: c.muted } }
+          }
+        }
+      });
+
+      // Si el usuario cambia preferencias de tema en otra pestaña, reestilamos rápido
+      window.addEventListener('storage', (e)=>{
+        if (!e.key) return;
+        if (e.key.startsWith('ac_')) {
+          setTimeout(()=>location.reload(), 30);
+        }
+      });
+    })();
   </script>
+
+  <!-- Scripts comunes -->
+  <script src="/js/main-navbar-admin.js" defer></script>
+  <script src="/js/accesibilidad-state.js" defer></script>
 </body>
 </html>

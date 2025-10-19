@@ -1,5 +1,52 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&display=swap");
+/* =========================================================
+   Accesibilidad: variables globales (aplican a TODAS las páginas)
+   ========================================================= */
+html{
+  --ac-gray: 0;        /* 0..1 */
+  --ac-contrast: 1;    /* 0.5..2 (slider) */
+  --ac-invert: 0;      /* 0..1 (modo nocturno) */
+  --ac-font-scale: 1;  /* 0.9..1.6 (slider) */
+  filter: grayscale(var(--ac-gray)) contrast(var(--ac-contrast)) invert(var(--ac-invert));
+  font-size: calc(16px * var(--ac-font-scale));
+  transition: filter .2s ease;
+}
+/* Revertir medios en modo invertido */
+html.modo-nocturno img,
+html.modo-nocturno video,
+html.modo-nocturno canvas,
+html.modo-nocturno svg{
+  filter: invert(var(--ac-invert)) !important;
+}
 
+/* =========================================================
+   Tipografías y Variables de tema
+   ========================================================= */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&family=Roboto:wght@300;400;500;700&display=swap");
+/* Fuentes alternativas para accesibilidad */
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@400;700&display=swap");
+
+/* === Switch de tipografía por variable === */
+:root { --font-family: "Nunito", sans-serif; }
+
+/* Tipografía por defecto (todo el sitio) usa la variable */
+* { font-family: var(--font-family), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+
+/* Tipografía alternativa 1: cambia SOLO la variable (sin !important global) */
+html.tipografia-alt { --font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+
+/* Tipografía alternativa 2: cambia SOLO la variable (sin !important global) */
+html.tipografia-alt2 { --font-family: "Merriweather Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+
+/* Guía de lectura (resalta bloques al pasar) */
+html.guia-lectura p:hover,
+html.guia-lectura li:hover,
+html.guia-lectura .card:hover{
+  background: #ffec80 !important;
+  color: #1a1a1a !important;
+}
+
+/* Variables de color/tema */
 :root {
   --bg-body: rgb(245, 247, 255);
   --primary-color: rgb(42, 51, 65);
@@ -25,58 +72,36 @@
   --accent-color: rgb(185, 129, 250);
 }
 
+/* =========================================================
+   Reset básico
+   ========================================================= */
 *,
 *::before,
-*::after {
-  box-sizing: border-box;
-}
+*::after { box-sizing: border-box; }
 
-* {
-  padding: 0;
-  margin: 0;
-  font-family: "Nunito", sans-serif;
-}
+* { padding: 0; margin: 0; }
 
-nav {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-}
+nav { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; }
 
-ul,
-ul li {
-  outline: 0;
-  list-style: none;
-}
+ul, ul li { outline: 0; list-style: none; }
 
-ul li a {
-  text-decoration: none;
-}
+ul li a { text-decoration: none; }
 
-img {
-  width: 100%;
-  user-select: none;
-  pointer-events: none;
-}
+img { width: 100%; user-select: none; pointer-events: none; }
 
-h1 {
-  font-size: clamp(1rem, 4vw, 1.2rem);
-}
-
-h2 {
-  font-size: clamp(0.9rem, 4vw, 1rem);
-}
+h1 { font-size: clamp(1rem, 4vw, 1.2rem); }
+h2 { font-size: clamp(0.9rem, 4vw, 1rem); }
 
 body {
   position: relative;
   background: var(--bg-body);
   overflow: auto; /* permite scroll si el contenido excede la pantalla */
+  color: var(--primary-color);
 }
 
-/* MAIN MENU */
-
+/* =========================================================
+   MAIN MENU (sidebar)
+   ========================================================= */
 .main-menu {
   position: fixed;
   top: 0;
@@ -90,6 +115,7 @@ body {
   padding: 12px 0 10px;
   overflow: hidden;
   font-family: inherit;
+  background: var(--bg-body);
 }
 
 .user-info {
@@ -116,9 +142,7 @@ body {
   margin: -15px 0 30px;
 }
 
-.nav-item {
-  display: block;
-}
+.nav-item { display: block; }
 
 .nav-item a {
   display: flex;
@@ -137,17 +161,248 @@ body {
   box-shadow: 0px 1px 4px var(--shadow-color);
 }
 
-.nav-icon {
-  width: 40px;
-  height: 20px;
-  font-size: 1.1rem;
+.nav-icon { width: 40px; height: 20px; font-size: 1.1rem; }
+.nav-text { display: block; width: 70px; height: 20px; letter-spacing: 0; }
+
+/* =========================================================
+   CONTENT (contenedor principal del panel)
+   ========================================================= */
+.content {
+  margin-left: 180px; /* espacio para el sidebar */
+  padding: 24px;
+  min-height: 100vh;
 }
 
-.nav-text {
-  display: block;
-  width: 70px;
-  height: 20px;
-  letter-spacing: 0;
+.card {
+  background: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 20px var(--shadow-color);
 }
 
-/* CONTENT */
+.card + .card { margin-top: 16px; }
+
+/* =========================================================
+   Panel de Accesibilidad (UI de tarjetas) 
+   ========================================================= */
+#accesibilidad-panel{
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  background: #2b2b2f;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  border-radius: 18px;
+  padding: 20px;
+  width: clamp(680px, 42vw, 860px);     /* ancho para que quepan varios cuadros */
+  max-width: calc(100vw - 40px);
+  color: #f3f3f7;
+}
+
+#accesibilidad-panel .ac-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cada "card" de acción */
+.ac-card{
+  width: 100%;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 0;
+  border-radius: 16px;
+  background: #3a3a40;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1.3;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .04s ease, background .15s ease, box-shadow .15s ease;
+}
+.ac-card i{
+  width: 64px; height: 64px;
+  display: grid; place-items: center;
+  font-size: 32px;
+  background: #2f2f34;
+  border-radius: 14px;
+}
+.ac-card:hover{ background:#47474f; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+.ac-card:active{ transform: translateY(1px); }
+.ac-card:focus-visible{ outline: 3px solid #6aa9ff; outline-offset: 2px; }
+.ac-card[aria-pressed="true"]{ box-shadow: 0 0 0 2px #6aa9ff; }
+
+/* =========================================================
+   Sliders (Contraste / Tamaño de letra)
+   ========================================================= */
+.ac-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.ac-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 99px;
+  background: linear-gradient(90deg,#6aa9ff,#98e3ff);
+  outline: none;
+}
+.ac-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #2f2f34;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+.ac-range::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; border: 3px solid #2f2f34; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+
+.ac-value {
+  min-width: 74px;
+  text-align: right;
+  font: 600 16px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: #e9eef7;
+  padding: 4px 8px;
+  background: #2f2f34;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+/* =========================================================
+   Botón Restablecer
+   ========================================================= */
+.ac-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 14px;
+  background: #d9534f;           /* rojo suave */
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter .15s ease, transform .04s ease;
+}
+.ac-reset:hover { filter: brightness(0.95); }
+.ac-reset:active { transform: translateY(1px); }
+.ac-reset i { font-size: 22px; }
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 1024px){
+  #accesibilidad-panel { width: clamp(560px, 60vw, 720px); }
+}
+@media (max-width: 740px){
+  #accesibilidad-panel{ width: calc(100vw - 24px); right:12px; left:12px; }
+  #accesibilidad-panel .ac-grid{ grid-template-columns: 1fr; }
+  .content { margin-left: 0; padding: 16px; }
+  .main-menu { position: static; width: 100%; height: auto; border-right: 0; border-bottom: 1px solid var(--border-color); }
+}
+
+/* =========================================================
+   Scrollbar (estética)
+   ========================================================= */
+*::-webkit-scrollbar { height: 8px; width: 8px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-color);
+  border-radius: 8px;
+}
+
+/* =====================================================================
+   OVERRIDES REACTIVOS DEL PANEL DE ACCESIBILIDAD (tema claro/oscuro)
+   ===================================================================== */
+/* Variables específicas del panel */
+:root.theme-light,
+:root:not(.modo-nocturno):not(.darkmode) {
+  --panel-bg:        #ffffff;
+  --panel-card:      #f5f7fb;
+  --panel-text:      #1f2937;
+  --panel-muted:     #6b7280;
+  --panel-border:    #e5e7eb;
+  --panel-shadow:    0 10px 24px rgba(0,0,0,.08);
+  --panel-accent:    #3b82f6;
+}
+:root.theme-dark,
+:root.modo-nocturno,
+.darkmode {
+  --panel-bg:        #1b2028;
+  --panel-card:      #2a3039;
+  --panel-text:      #e5e7eb;
+  --panel-muted:     #a5b1c2;
+  --panel-border:    #3a4453;
+  --panel-shadow:    0 12px 28px rgba(0,0,0,.40);
+  --panel-accent:    #60a5fa;
+}
+
+/* Aplica variables al contenedor del panel */
+#accesibilidad-panel{
+  background: var(--panel-bg) !important;
+  color: var(--panel-text) !important;
+  border: 1px solid var(--panel-border) !important;
+  box-shadow: var(--panel-shadow) !important;
+}
+
+/* Tarjetas del panel */
+#accesibilidad-panel .ac-card{
+  background: var(--panel-card) !important;
+  color: var(--panel-text) !important;
+  border: 1px solid var(--panel-border) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02) !important;
+}
+#accesibilidad-panel .ac-card i{
+  background: rgba(0,0,0,.06) !important; /* se ve bien en ambos temas */
+}
+#accesibilidad-panel .ac-card:hover{
+  filter: brightness(0.98);
+}
+
+/* Texto tenue dentro del panel */
+#accesibilidad-panel .ac-value,
+#accesibilidad-panel .ac-card small,
+#accesibilidad-panel .ac-card .muted{
+  color: var(--panel-muted) !important;
+}
+
+/* Botón reset */
+#accesibilidad-panel .ac-reset{
+  background: #e74c3c !important;
+  color: #fff !important;
+  border: 1px solid rgba(0,0,0,.08) !important;
+}
+:root.theme-dark #accesibilidad-panel .ac-reset,
+:root.modo-nocturno  #accesibilidad-panel .ac-reset,
+.darkmode            #accesibilidad-panel .ac-reset{
+  background: #dc514a !important;
+}
+
+/* Slider acorde al tema */
+#accesibilidad-panel .ac-range{ accent-color: var(--panel-accent) !important; }
+#accesibilidad-panel .ac-range::-webkit-slider-runnable-track{
+  background: linear-gradient(90deg, var(--panel-accent), var(--panel-accent)) !important;
+  height: 6px;
+  border-radius: 999px;
+}
