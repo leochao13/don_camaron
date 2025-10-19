@@ -96,39 +96,130 @@ function avatar_url(array $u): string {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
+  <!-- ✅ Boot tema/accesibilidad ANTES de pintar + TTS auto -->
+  <script>
+  (function(){
+    var r=document.documentElement;
+    try{
+      // Tema: por defecto CLARO
+      var dark = localStorage.getItem('ac_dark');
+      if (dark === null || dark === undefined) {
+        localStorage.setItem('ac_dark','0');
+        dark = '0';
+      }
+      var isDark = dark === '1';
+      r.classList.toggle('theme-dark', isDark);
+      r.classList.toggle('theme-light', !isDark);
+      r.classList.toggle('modo-nocturno', isDark); // compat con estilos antiguos
+      r.style.setProperty('--ac-invert', isDark ? '1' : '0');
+
+      // Accesibilidad
+      var c=parseFloat(localStorage.getItem('ac_contrast_val'));
+      if(isNaN(c)) c = (localStorage.getItem('ac_contrast')==='1') ? 1.6 : 1;
+      var f=parseFloat(localStorage.getItem('ac_font_scale'));
+      if(isNaN(f)) f = (localStorage.getItem('ac_font')==='1') ? 1.35 : 1;
+      r.style.setProperty('--ac-contrast', String(Math.min(2,Math.max(0.5,c))));
+      r.style.setProperty('--ac-font-scale', String(Math.min(1.6,Math.max(0.9,f))));
+      r.style.setProperty('--ac-gray', localStorage.getItem('ac_gray')==='1' ? '1' : '0');
+      if(localStorage.getItem('ac_ruler')==='1'){ r.classList.add('guia-lectura'); }
+      if(localStorage.getItem('ac_fontface')==='1'){ r.classList.add('tipografia-alt'); }
+      if(localStorage.getItem('ac_fontface2')==='1'){ r.classList.add('tipografia-alt2'); }
+
+      // TTS auto (si ya hubo gesto en Ajustes)
+      (function(){
+        const want = localStorage.getItem('ac_tts')==='auto';
+        let seeded = false;
+        try { seeded = sessionStorage.getItem('ac_tts_seeded')==='1'; } catch(_){}
+        if(!want || !seeded) return;
+
+        function collectText(){
+          const q=s=>document.querySelector(s);
+          const parts=[];
+          parts.push(q('.admin-sidebar, .main-menu, nav[role="navigation"]')?.innerText||'');
+          parts.push(q('main, .container, .content')?.innerText||'');
+          const t=parts.filter(Boolean).join('\n\n').trim();
+          return t || (document.body.innerText||'').trim();
+        }
+        function speakNow(t){
+          try{
+            if(!('speechSynthesis' in window)) return;
+            speechSynthesis.cancel();
+            const u=new SpeechSynthesisUtterance(t);
+            u.lang='es-MX';
+            speechSynthesis.speak(u);
+          }catch(_){}
+        }
+        if(document.readyState==='loading'){
+          document.addEventListener('DOMContentLoaded', ()=>speakNow(collectText()), {once:true});
+        }else{
+          speakNow(collectText());
+        }
+      })();
+    }catch(e){}
+  })();
+  </script>
+
   <style>
-    :root{
-      --bg:#0f1216; --fg:#e5e7eb; --card:#151a21;
-      --line:#1e2530; --line2:#273142; --primary:#25b7a1;
-      --muted:#9aa4b2;
+    /* ====== usar variables del tema global ====== */
+
+    .container { margin-left: 240px; max-width: calc(100% - 260px); }
+    @media (max-width: 991px){ .container{ margin-left: 16px; max-width: calc(100% - 32px); } }
+
+    .card{
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      color: var(--fg);
     }
-    body.darkmode{ background:var(--bg); color:var(--fg); }
-    .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; }
-    .form-control,.form-select,textarea{ background:#0f141d; color:var(--fg); border:1px solid var(--line2); }
-    .form-control::placeholder{ color:#8a94a3; }
-    .btn-primary{ background:var(--primary); border-color:var(--primary); }
-    .btn-outline-primary{ border-color:var(--primary); color:var(--primary); }
-    .btn-outline-primary:hover{ background:var(--primary); color:#0d1514; }
-    .table thead th{ border-color:var(--line2); }
-    .table tbody td{ border-color:var(--line); }
+
+    .form-control,.form-select,textarea{
+      background: var(--card-bg);
+      color: var(--fg);
+      border: 1px solid var(--card-border);
+    }
+    .form-control::placeholder{ color: var(--muted-fg); }
+
+    .btn-primary{ background:#25b7a1; border-color:#25b7a1; color:#0d1514; }
+    .btn-outline-primary{ border-color:#25b7a1; color:#25b7a1; }
+    .btn-outline-primary:hover{ background:#25b7a1; color:#0d1514; }
+
+    .table thead th{
+      background: var(--card-bg);
+      color: var(--fg);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .table tbody td{
+      color: var(--fg);
+      border-color: var(--card-border);
+    }
+    .table-hover tbody tr:hover{ background: var(--muted-bg); }
+
     .badge-role{ font-weight:700; letter-spacing:.3px; border-radius:999px; padding:.35rem .6rem; font-size:.72rem; }
     .badge-role.admin{ background:#2b3e66; color:#b9d4ff; }
     .badge-role.mesero{ background:#2b6651; color:#b9ffe5; }
     .badge-role.cliente{ background:#5a3b3b; color:#ffd6d6; }
 
-    .container { margin-left: 240px; max-width: calc(100% - 260px); }
-    @media (max-width: 991px){ .container{ margin-left: 16px; max-width: calc(100% - 32px); } }
-
-    .avatar{ width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid var(--line2); background:#0c0f14; }
+    .avatar{ width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid var(--card-border); background: var(--card-bg); }
     .user-cell{ display:flex; align-items:center; gap:.75rem; }
+
     .pill-filter .btn{ border-radius:999px; padding:.25rem .7rem; font-size:.85rem; }
-    .searchbar{ display:flex; gap:.5rem; align-items:center; background:#0f141d; border:1px solid var(--line2); border-radius:12px; padding:.25rem .6rem; }
-    .searchbar input{ border:0; background:transparent; color:var(--fg); outline:0; }
-    .searchbar .bx{ color:var(--muted); font-size:1.2rem; }
-    .table-hover tbody tr:hover{ background:#111722; }
+
+    .searchbar{
+      display:flex; gap:.5rem; align-items:center;
+      background: var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:12px; padding:.25rem .6rem;
+    }
+    .searchbar input{ border:0; background:transparent; color: var(--fg); outline:0; }
+    .searchbar .bx{ color: var(--muted-fg); font-size:1.2rem; }
+
+    .text-muted, .muted { color: var(--muted-fg) !important; }
   </style>
 </head>
-<body class="darkmode">
+
+<!-- ❌ sin class="darkmode" -->
+<body>
 
   <!-- Navbar lateral -->
   <div id="navbar-container"></div>
@@ -173,7 +264,7 @@ function avatar_url(array $u): string {
       <div class="card-body">
         <div class="table-responsive">
           <table class="table table-sm align-middle table-hover">
-            <thead class="table-dark">
+            <thead>
               <tr>
                 <th style="width:60px;">ID</th>
                 <th style="width:70px;">Avatar</th>
@@ -282,7 +373,11 @@ function avatar_url(array $u): string {
     </div>
   </div>
 
-  <script src="/js/main-navbar-admin.js"></script>
+  <!-- Scripts comunes -->
+  <script src="/js/main-navbar-admin.js" defer></script>
+  <script src="/js/accesibilidad-state.js" defer></script>
+
+  <!-- Bootstrap + lógica local -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const modalEl = document.getElementById('usuarioModal');
@@ -312,7 +407,7 @@ function avatar_url(array $u): string {
       document.getElementById('u_pass').value = '';
       document.getElementById('pass_help').textContent = 'Deja vacío para mantener la contraseña actual.';
 
-      // Vista previa: si BD no trae ruta, usa la imagen actual de la tabla
+      // Vista previa
       let src = (data && data.foto) ? (data.foto.startsWith('/') ? data.foto : '/' + data.foto) : '';
       if (!src) {
         const rowImg = document.querySelector(`tr[data-id="${id}"] img.avatar`);
@@ -335,7 +430,7 @@ function avatar_url(array $u): string {
       reader.readAsDataURL(f);
     });
 
-    // Submit del formulario: si backend manda logout=true, recarga para que polices.php redirija a 404
+    // Submit del formulario
     document.getElementById('formUsuario').addEventListener('submit', function(ev){
       ev.preventDefault();
       const fd = new FormData(this);
@@ -357,7 +452,7 @@ function avatar_url(array $u): string {
       .catch(e => alert('No se pudo guardar: ' + e.message));
     });
 
-    // Borrado: si backend manda logout=true, recarga para que polices.php redirija a 404
+    // Borrado
     function confirmDelete(id){
       if(!confirm('¿Eliminar el usuario #' + id + '?')) return;
       const fd = new FormData();
@@ -379,6 +474,9 @@ function avatar_url(array $u): string {
       })
       .catch(e => alert('No se pudo eliminar: ' + e.message));
     }
+    window.confirmDelete = confirmDelete;
+    window.openCreate = openCreate;
+    window.openEdit = openEdit;
   </script>
 </body>
 </html>
