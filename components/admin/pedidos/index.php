@@ -59,37 +59,128 @@ try {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Admin | Pedidos</title>
+
+  <!-- Estilos -->
   <link rel="stylesheet" href="/components/admin/admin-estilo.css">
   <link rel="icon" href="/icon.png" type="image/x-icon">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- ✅ Boot de tema/accesibilidad ANTES de pintar -->
+  <script>
+  (function(){
+    var r=document.documentElement;
+    try{
+      // Tema por defecto: CLARO
+      var dark = localStorage.getItem('ac_dark');
+      if (dark === null || dark === undefined) {
+        localStorage.setItem('ac_dark','0');
+        dark = '0';
+      }
+      var isDark = dark === '1';
+      r.classList.toggle('theme-dark', isDark);
+      r.classList.toggle('theme-light', !isDark);
+      r.classList.toggle('modo-nocturno', isDark); // compatibilidad
+      r.style.setProperty('--ac-invert', isDark ? '1' : '0');
+
+      // Accesibilidad
+      var c=parseFloat(localStorage.getItem('ac_contrast_val'));
+      if(isNaN(c)) c = (localStorage.getItem('ac_contrast')==='1') ? 1.6 : 1;
+      var f=parseFloat(localStorage.getItem('ac_font_scale'));
+      if(isNaN(f)) f = (localStorage.getItem('ac_font')==='1') ? 1.35 : 1;
+      r.style.setProperty('--ac-contrast', String(Math.min(2,Math.max(0.5,c))));
+      r.style.setProperty('--ac-font-scale', String(Math.min(1.6,Math.max(0.9,f))));
+      r.style.setProperty('--ac-gray', localStorage.getItem('ac_gray')==='1' ? '1' : '0');
+      if(localStorage.getItem('ac_ruler')==='1'){ r.classList.add('guia-lectura'); }
+      if(localStorage.getItem('ac_fontface')==='1'){ r.classList.add('tipografia-alt'); }
+      if(localStorage.getItem('ac_fontface2')==='1'){ r.classList.add('tipografia-alt2'); }
+
+      // TTS auto (si ya hubo gesto)
+      (function(){
+        const want = localStorage.getItem('ac_tts')==='auto';
+        let seeded = false;
+        try { seeded = sessionStorage.getItem('ac_tts_seeded')==='1'; } catch(_){}
+        if(!want || !seeded) return;
+
+        function collectText(){
+          const q=s=>document.querySelector(s);
+          const parts=[];
+          parts.push(q('.admin-sidebar, .main-menu, nav[role="navigation"]')?.innerText||'');
+          parts.push(q('main, .container, .content')?.innerText||'');
+          const t=parts.filter(Boolean).join('\n\n').trim();
+          return t || (document.body.innerText||'').trim();
+        }
+        function speakNow(t){
+          try{
+            if(!('speechSynthesis' in window)) return;
+            speechSynthesis.cancel();
+            const u=new SpeechSynthesisUtterance(t);
+            u.lang='es-MX';
+            speechSynthesis.speak(u);
+          }catch(_){}
+        }
+        if(document.readyState==='loading'){
+          document.addEventListener('DOMContentLoaded', ()=>speakNow(collectText()), {once:true});
+        }else{
+          speakNow(collectText());
+        }
+      })();
+    }catch(e){}
+  })();
+  </script>
+
   <style>
-    body.darkmode { background:#0f1216; color:#e5e7eb; }
-    .card { background:#151a21; border:1px solid #1e2530; border-radius:16px; }
-    .table thead th { border-color:#273142; }
-    .table tbody td { border-color:#1e2530; }
-    .muted { color:#94a3b8; }
-    .badge-soft { background:#223049; color:#cfe7ff; border:1px solid #2e3c55; }
-    .toolbar .form-control, .toolbar .form-select { background:#0f141d; color:#e5e7eb; border:1px solid #273142; }
-
-    /* ✅ Solución rápida: empuja el contenido a la derecha del sidebar */
+    /* =====================
+       Usar variables de tema
+       ===================== */
     .container {
-      margin-left: 240px;              /* ancho aproximado del sidebar */
-      max-width: calc(100% - 260px);   /* deja un poco de espacio extra */
+      margin-left: 240px;
+      max-width: calc(100% - 260px);
     }
-
-    /* Opcional: en pantallas chicas, quita el margen para aprovechar ancho */
     @media (max-width: 991px) {
       .container { margin-left: 16px; max-width: calc(100% - 32px); }
     }
+
+    .card {
+      background: var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      color: var(--fg);
+    }
+    .muted { color: var(--muted-fg); }
+    .badge-soft {
+      background:#223049; color:#cfe7ff; border:1px solid #2e3c55;
+    }
+
+    /* Toolbar */
+    .toolbar .form-control,
+    .toolbar .form-select {
+      background: var(--card-bg);
+      color: var(--fg);
+      border:1px solid var(--card-border);
+    }
+
+    /* Tabla con variables (evitar .table-dark fija) */
+    .table thead th {
+      background: var(--card-bg);
+      color: var(--fg);
+      border-bottom:1px solid var(--card-border);
+    }
+    .table tbody td {
+      color: var(--fg);
+      border-color: var(--card-border);
+    }
   </style>
 </head>
-<body class="darkmode">
+
+<!-- ❌ quitar class="darkmode" -->
+<body>
   <div id="navbar-container"></div>
 
   <div class="container py-4">
@@ -143,7 +234,7 @@ try {
         <?php if ($listado): ?>
           <div class="table-responsive">
             <table class="table table-sm align-middle">
-              <thead class="table-dark">
+              <thead>
                 <tr>
                   <th style="width:70px;">ID</th>
                   <th style="min-width:160px;">Folio</th>
@@ -192,7 +283,11 @@ try {
     </div>
   </div>
 
-  <script src="/js/main-navbar-admin.js"></script>
+  <!-- Scripts comunes -->
+  <script src="/js/main-navbar-admin.js" defer></script>
+  <script src="/js/accesibilidad-state.js" defer></script>
+
+  <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
